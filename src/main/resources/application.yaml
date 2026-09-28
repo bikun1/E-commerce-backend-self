@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: E-commerce-backend
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo_auth
+    username: user_self
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+jwt:
+  secret-access-token: xzwrH+NZ8ZHYh1uAogutxvSiNngM4oCviYkq+3Rz6as=
+  secret-refresh-token: whQ/mStXT8ylHk91uPyqHrrUlo5+PmaJGkX6wRkOGdQ=
+  expiration-access-millis: 9000000
+  expiration-refresh-millis: 900000000
