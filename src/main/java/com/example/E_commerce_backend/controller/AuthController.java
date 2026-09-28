@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.E_commerce_backend.service.AuthService;
 
 import dto.request.LoginRequest;
-import dto.response.ApiResponse;
+import dto.response.ApiResult;
 import dto.response.JwtResponseBody;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +25,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Authentication APIs")
 public class AuthController {
+
     private final AuthService authService;
 
     @PostMapping("login")
-    @Operation(summary = "Login", description = "Authenticate user and return JWt access token")
-    public ResponseEntity<ApiResponse<JwtResponseBody>> login(@Valid @RequestBody LoginRequest loginRequest) {
+    @Operation(operationId = "login", summary = "Login", description = "Authenticate user and return JWT access token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login successful"),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResult.class))),
+            @ApiResponse(responseCode = "401", description = "Wrong username or password", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResult.class)))
+    })
+    public ResponseEntity<ApiResult<JwtResponseBody>> login(@Valid @RequestBody LoginRequest loginRequest) {
         JwtResponseBody responseBody = authService.login(loginRequest);
         responseBody.setRefreshToken(null);
 
-        return ResponseEntity.ok(ApiResponse.success("Login successful", responseBody));
+        return ResponseEntity.ok(ApiResult.success("Login successful", responseBody));
     }
 }

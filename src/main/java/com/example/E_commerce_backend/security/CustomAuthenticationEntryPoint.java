@@ -6,7 +6,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import dto.response.ApiResponse;
+import dto.response.ApiResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,11 +25,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json;");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(
+        ApiResult<Void> apiResult = ApiResult.error(
                 "Authentication required: please log in to access this resource",
-                ApiResponse.ErrorCode.UNAUTHORIZED.name());
+                ApiResult.ErrorCode.UNAUTHORIZED.name());
 
-        objectMapper.writeValue(response.getWriter(), apiResponse);
+        objectMapper.writeValue(response.getWriter(), apiResult);
     }
 
 }

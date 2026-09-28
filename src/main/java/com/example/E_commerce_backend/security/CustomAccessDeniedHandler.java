@@ -6,7 +6,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-import dto.response.ApiResponse;
+import dto.response.ApiResult;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,11 +25,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json;");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(
+        ApiResult<Void> apiResult = ApiResult.error(
                 "Access denied: you don't have permission to access this resource",
-                ApiResponse.ErrorCode.FORBIDDEN.name());
+                ApiResult.ErrorCode.FORBIDDEN.name());
 
-        objectMapper.writeValue(response.getWriter(), apiResponse);
+        objectMapper.writeValue(response.getWriter(), apiResult);
     }
 
 }
