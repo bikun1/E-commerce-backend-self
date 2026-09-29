@@ -15,7 +15,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
 jwt:
-  secret-access-token: xzwrH+NZ8ZHYh1uAogutxvSiNngM4oCviYkq+3Rz6as=
+  secret-access-token: KOJWHSB9NnxyVu0gu77rrnkgylD8qEr6TRCM0xzdumI=
   secret-refresh-token: whQ/mStXT8ylHk91uPyqHrrUlo5+PmaJGkX6wRkOGdQ=
   expiration-access-millis: 9000000
   expiration-refresh-millis: 900000000

@@ -22,7 +22,7 @@ public class JwtCore {
 
     public String buildToken(Map<String, Object> claims, UserDetails userDetails, String secret, long expiration) {
         String username = userDetails.getUsername();
-        String jti = UUID.randomUUID().toString();
+        String jti = UUID.randomUUID().toString(); // black list
         return Jwts
                 .builder()
                 .id(jti)
@@ -48,7 +48,7 @@ public class JwtCore {
     }
 
     public boolean isTokenExpired(String token, String secret) {
-        return extractClaim(token, secret, Claims::getExpiration).after(new Date());
+        return extractClaim(token, secret, Claims::getExpiration).before(new Date());
     }
 
     public boolean isTokenValid(String token, String secret, UserDetails userDetails) {

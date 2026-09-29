@@ -35,7 +35,7 @@ public class AccessTokenService extends JwtCore {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, token, Claims::getSubject);
+        return extractClaim(token, SECRET_KEY, Claims::getSubject);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
