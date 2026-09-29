@@ -1,4 +1,4 @@
-package dto.response;
+package com.example.E_commerce_backend.dto.response;
 
 import java.time.Instant;
 import java.util.List;
