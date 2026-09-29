@@ -33,41 +33,67 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // clearData();
         seedData();
     }
 
+    private void clearData() {
+        logger.info("Clearing old data");
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+        permissionRepository.deleteAll();
+    }
+
     private void seedData() {
-        if (permissionRepository.count() > 0) {
-            logger.info("permission already exists");
-            return;
-        }
-
         logger.info("Seeding permissions");
-        Permission test1 = Permission.of("/api/test1", "GET");
-        Permission test2 = Permission.of("/api/test2", "GET");
+        Permission listUsers = Permission.of("/api/users", "GET");
+        Permission getUserById = Permission.of("/api/users/{id}", "GET");
+        Permission updateUserById = Permission.of("/api/users/{id}", "PUT");
+        Permission deleteUserById = Permission.of("/api/users/{id}", "DELETE");
 
-        permissionRepository.saveAll(List.of(test1, test2));
-
-        if (roleRepository.count() > 0) {
-            logger.info("Role already exists");
-            return;
+        if (!permissionRepository.existsByPathAndMethod(listUsers.getPath(), listUsers.getMethod())) {
+            permissionRepository.save(listUsers);
+        }
+        if (!permissionRepository.existsByPathAndMethod(getUserById.getPath(), getUserById.getMethod())) {
+            permissionRepository.save(getUserById);
+        }
+        if (!permissionRepository.existsByPathAndMethod(updateUserById.getPath(), updateUserById.getMethod())) {
+            permissionRepository.save(updateUserById);
+        }
+        if (!permissionRepository.existsByPathAndMethod(deleteUserById.getPath(), deleteUserById.getMethod())) {
+            permissionRepository.save(deleteUserById);
         }
 
-        logger.info("Seeding roles");
-        Role adminRole = Role.of("Admin Role", Set.of(test1, test2));
-        Role norRole = Role.of("User Role", Set.of(test1));
+        List<Permission> allPermissions = permissionRepository.findAll();
+        List<Permission> userPermissions = allPermissions.stream()
+                .filter(permission -> permission.getPath().equals("/api/users") && permission.getMethod().equals("GET")
+                        || permission.getPath().equals("/api/users/{id}") && permission.getMethod().equals("GET"))
+                .toList();
+        List<Permission> adminPermissions = allPermissions.stream()
+                .filter(permission -> permission.getPath().equals("/api/users") && permission.getMethod().equals("GET")
+                        || permission.getPath().equals("/api/users/{id}") && (permission.getMethod().equals("GET")
+                                || permission.getMethod().equals("PUT")
+                                || permission.getMethod().equals("DELETE")))
+                .toList();
 
-        roleRepository.saveAll(List.of(adminRole, norRole));
-
-        if (userRepository.count() > 0) {
-            logger.info("User already exists");
-            return;
+        if (roleRepository.count() == 0) {
+            logger.info("Seeding roles");
+            Role adminRole = Role.of("Admin Role", Set.copyOf(adminPermissions));
+            Role norRole = Role.of("User Role", Set.copyOf(userPermissions));
+            roleRepository.saveAll(List.of(adminRole, norRole));
         }
 
-        logger.info("Seeding users");
-        User admin = User.of("Admin", "admin@test.com", passwordEncoder.encode("123456"), Set.of(adminRole));
-        User user = User.of("User", "user@test.com", passwordEncoder.encode("123456"), Set.of(norRole));
+        if (userRepository.count() == 0) {
+            logger.info("Seeding users");
+            Role adminRole = roleRepository.findByName("Admin Role").orElseThrow(
+                    () -> new IllegalStateException("Admin role not exists"));
+            Role normalRole = roleRepository.findByName("User Role").orElseThrow(
+                    () -> new IllegalStateException("User role not exists"));
 
-        userRepository.saveAll(List.of(admin, user));
+            User admin = User.of("Admin", "admin@test.com", passwordEncoder.encode("123456"), Set.of(adminRole));
+            User user = User.of("User", "user@test.com", passwordEncoder.encode("123456"), Set.of(normalRole));
+
+            userRepository.saveAll(List.of(admin, user));
+        }
     }
 }

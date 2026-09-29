@@ -60,6 +60,8 @@ public class AuthController {
                                 .maxAge(Duration.ofMillis(REFRESH_EXPIRATION_MILLS))
                                 .build();
 
+                responseBody.setRefreshToken(null);
+
                 return ResponseEntity
                                 .ok()
                                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

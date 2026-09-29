@@ -7,4 +7,5 @@ import com.example.E_commerce_backend.entity.Permission;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
+    boolean existsByPathAndMethod(String path, String method);
 }
