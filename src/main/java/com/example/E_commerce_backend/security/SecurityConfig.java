@@ -25,18 +25,19 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAuthorizationManager authorizationManager;
 
+    private final String[] authPublicRequest = new String[] { "/api/auth/login", "/api/auth/register" };
+    private final String[] swaggerPublicRequest = new String[] { "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html" };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers(
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui/**",
-                                        "/swagger-ui.html")
-                                .permitAll()
-                                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                                .requestMatchers(swaggerPublicRequest).permitAll()
+                                .requestMatchers(authPublicRequest).permitAll()
                                 .anyRequest().access(authorizationManager))
                 .authenticationProvider(authenticationProvider())
                 .exceptionHandling(
